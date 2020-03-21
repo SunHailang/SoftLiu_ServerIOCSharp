@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SoftLiu_ServerIOCSharp.ServerData;
+using SoftLiu_ServerIOCSharp.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,9 +18,53 @@ namespace SoftLiu_ServerIOCSharp
         const int m_serverPort = 20000;
 
         static bool m_isRunning = false;
+
+        static string m_envPath = string.Empty;
         static void Main(string[] args)
         {
+            //m_envPath = Environment.CurrentDirectory + @"\..\..\cn_windows_10.iso";
+
+            //string path = new DirectoryInfo("../../../../").FullName;
+            //Console.WriteLine(path);
+
+            //if (File.Exists(path + "/cn_windows_10.iso"))
+            //{
+            //    Console.WriteLine("True");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("False");
+            //}
+
+            //Console.WriteLine(m_envPath);
+
+            //string data = "attachment; filename=" + "cn_windows_10.iso";
+            //string[] data1 = data.Split(';');
+            //string data2 = "";
+            //for (int i = 0; i < data1.Length; i++)
+            //{
+            //    if (data1[i].Trim().Contains("filename="))
+            //    {
+            //        data2 = data1[i];
+            //        break;
+            //    }
+            //}
+            //string[] data3 = data.Split('=');
+            //if (data3.Length==2)
+            //{
+            //    Console.WriteLine(data3[1]);
+            //}
+            //Console.WriteLine(data3.Length);
+
+            //string m_fileDir = new DirectoryInfo("../../../Resources/GameData/AssetBundles/" + "Android").FullName;
+            //string tar = new DirectoryInfo("../../../").FullName + "Resources/GameData/AssetBundles";
+            //SharpZipUtility.ZipFie(m_fileDir, tar + "/android.zip");
+            //SharpZipUtility.UnZipFile(tar + "/android.zip", tar);
+            //Console.WriteLine("UnZipFile Complete.");
+
             HttpSer();
+
+
 
             // 创建 Socket 服务器
             //Socket serverSocet = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -32,11 +78,74 @@ namespace SoftLiu_ServerIOCSharp
             //    Thread requestThread = new Thread(() => { });
             //    requestThread.Start();
             //}
+            Console.Read();
         }
 
         static void ProcessRequest(Socket handler)
         {
             // 构造请求报文
+
+        }
+
+        private static void WriteFile(HttpListenerContext cxt, string filePath)
+        {
+            HttpListenerContext m_ctx = cxt;
+
+            //ThreadPool.QueueUserWorkItem(new WaitCallback(TaskProc), ctx);                    
+
+            HttpListenerResponse response = m_ctx.Response;
+
+            string path = new DirectoryInfo("../../../../").FullName;
+            string m_filePath = path + "cn_windows_10.iso";
+
+
+            byte[] hello = Encoding.UTF8.GetBytes("Hello World!");
+            //response.SetCookie("Content-Length", hello.Length.ToString());
+            //response.ContentType = "text/plain;charset=UTF-8";
+
+            //response.AddHeader("Connection", "Keep-Alive");
+            //ctx.Response.OutputStream.Write()
+
+            if (!File.Exists(m_filePath))
+            {
+                Console.WriteLine("File Not Exists : " + m_filePath);
+            }
+            else
+            {
+                response.ContentEncoding = Encoding.UTF8;
+
+                using (FileStream fs = File.OpenRead(m_filePath))
+                {
+                    response.ContentLength64 = fs.Length;
+                    response.SendChunked = false;
+                    response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
+                    response.AddHeader("Content-disposition", "attachment; filename=" + "cn_windows_10.iso");
+
+                    byte[] buffer = new byte[1024 * 64];
+                    int read = 0;
+                    using (BinaryWriter bw = new BinaryWriter(response.OutputStream))
+                    {
+                        while ((read = fs.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            bw.Write(buffer, 0, read);
+                            bw.Flush();
+                        }
+                        //response.ContentLength64 = hello.Length;
+                        //bw.Write(hello, 0, hello.Length);
+                        bw.Close();
+                    }
+                }
+                response.StatusCode = (int)HttpStatusCode.OK;
+                response.StatusDescription = "OK";
+                response.OutputStream.Close();
+            }
+            //使用Writer输出http响应代码
+            //using (StreamWriter writer = new StreamWriter(ctx.Response.OutputStream))
+            //{
+            //    
+            //    writer.Close();
+            //    ctx.Response.Close();
+            //}
 
         }
 
@@ -50,7 +159,6 @@ namespace SoftLiu_ServerIOCSharp
                 Console.WriteLine("WebServer Starting ...");
 
                 int maxThreadNum, portThreadNum;
-
                 //线程池
                 int minThreadNum;
                 ThreadPool.SetMaxThreads(10, 10);
@@ -61,40 +169,49 @@ namespace SoftLiu_ServerIOCSharp
 
                 Console.WriteLine(maxThreadNum + "  -  " + minThreadNum);
 
+                //Task task = Task.Factory.StartNew(() =>
+                //{
                 while (true)
                 {
-                    HttpListenerContext ctx = listener.GetContext();
-
-                    //ThreadPool.QueueUserWorkItem(new WaitCallback(TaskProc), ctx);
-
-                    ctx.Response.StatusCode = 200;
-
-                    if (ctx.Request.HttpMethod == "GET")
+                    try
                     {
-                        //string name = ctx.Request.QueryString["name"];
-                        //if (!string.IsNullOrEmpty(name))
-                        //{
-                        //    Console.WriteLine("Request Name: " + name);
-                        //}
-                        Console.WriteLine(ctx.Request.UserHostAddress + " -> Use Get Request.");
+                        HttpListenerContext context = listener.GetContext();
+
+                        Task.Factory.StartNew((ctx) =>
+                        {
+                            try
+                            {
+                                //WriteFile((HttpListenerContext)ctx, @"C:\LargeFile.zip");
+                                ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
+                                contextData.Response();
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Two Error: " + e.Message);
+                            }
+                        }, context, TaskCreationOptions.LongRunning);
                     }
-                    else if (ctx.Request.HttpMethod == "POST")
+                    catch (Exception e)
                     {
-                        Console.WriteLine(ctx.Request.UserHostAddress + " -> Use Post Request.");
-                    }
-
-
-                    //使用Writer输出http响应代码
-                    using (StreamWriter writer = new StreamWriter(ctx.Response.OutputStream))
-                    {
-                        writer.WriteLine("Hello World!");
-                        writer.Close();
-                        ctx.Response.Close();
+                        Console.WriteLine("One Errpr: " + e.Message);
+                        //break;
                     }
                 }
-                //listener.Stop();
-            }
+                //}, TaskCreationOptions.AttachedToParent);
 
+                //while (true)
+                //{
+                //    HttpListenerContext context = listener.GetContext();
+                //    try
+                //    {
+                //        WriteFile(context, "");
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        Console.WriteLine("Write File Error: " + e.Message);
+                //    }
+                //}
+            }
         }
 
         static void PostTask(HttpListenerContext context)

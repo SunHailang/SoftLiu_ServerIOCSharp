@@ -5,6 +5,7 @@
 /Library/
 .vs/
 /Temp/
+/packages/
 /SoftLiu_ServerIOCSharp/bin/
 /SoftLiu_ServerIOCSharp/obj/
 
