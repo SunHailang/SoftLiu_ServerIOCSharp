@@ -1,0 +1,83 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+
+
+namespace SoftLiu_ServerIOCSharp.ServerData
+{
+    public enum VersionCheckType
+    {
+        None,
+        UpdateType,
+        LatestType,
+    }
+
+    public class VersionCheckData
+    {
+
+        private HttpListenerResponse m_response = null;
+
+        private VersionCheckType m_type = VersionCheckType.None;
+
+        private string m_version = string.Empty;
+
+        public VersionCheckData(HttpListenerResponse response, VersionCheckType type, string version = "")
+        {
+            this.m_response = response;
+            this.m_type = type;
+            this.m_version = version;
+        }
+
+        public void Response()
+        {
+            CheckData data = new CheckData(m_type, this.m_version);
+            byte[] buffer = Encoding.UTF8.GetBytes(data.ToString());
+            m_response.ContentEncoding = Encoding.UTF8;
+            m_response.ContentLength64 = buffer.Length;
+            using (BinaryWriter bw = new BinaryWriter(m_response.OutputStream))
+            {
+                bw.Write(buffer, 0, buffer.Length);
+                bw.Flush();
+                
+                bw.Close();
+            }
+            this.m_response.StatusCode = (int)HttpStatusCode.OK;
+            this.m_response.OutputStream.Close();
+            ////使用Writer输出http响应代码
+            //using (StreamWriter writer = new StreamWriter(this.m_response.OutputStream))
+            //{
+            //    CheckData data = new CheckData(m_type, this.m_version);
+
+
+            //    writer.Write(data.ToString());
+
+            //    this.m_response.StatusCode = (int)HttpStatusCode.OK;
+            //    writer.Close();
+            //    this.m_response.OutputStream.Close();
+            //}
+        }
+    }
+
+    public class CheckData
+    {
+        public VersionCheckType m_type;
+        public string m_version = string.Empty;
+
+        public CheckData(VersionCheckType type, string version)
+        {
+            this.m_type = type;
+            this.m_version = version;
+        }
+
+        public override string ToString()
+        {
+            string json = JsonConvert.SerializeObject(this);
+            return json;
+        }
+    }
+}

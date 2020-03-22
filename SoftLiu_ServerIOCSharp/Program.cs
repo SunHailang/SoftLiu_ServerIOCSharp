@@ -17,11 +17,28 @@ namespace SoftLiu_ServerIOCSharp
         const string m_serverIP = "";
         const int m_serverPort = 20000;
 
+        private const string m_serverURL = "http://localhost:8080/AssetBundles/";
+
         static bool m_isRunning = false;
 
         static string m_envPath = string.Empty;
+
+        static void OrderByName()
+        {
+            DirectoryInfo dir = new DirectoryInfo("../../../Resources/GameData/AssetBundles/Android");
+            FileInfo[] infos = dir.GetFiles();
+            FileInfo[] list = infos.OrderBy(file => { return file.Name; }).ToArray();
+            foreach (var item in list)
+            {
+                Console.WriteLine(item.Name);
+            }
+        }
+
         static void Main(string[] args)
         {
+            //OrderByName();
+            //CheckData data = new CheckData(VersionCheckType.UpdateType, "0.1.2");
+            //Console.WriteLine(data.ToString());
             //m_envPath = Environment.CurrentDirectory + @"\..\..\cn_windows_10.iso";
 
             //string path = new DirectoryInfo("../../../../").FullName;
@@ -154,7 +171,7 @@ namespace SoftLiu_ServerIOCSharp
             using (HttpListener listener = new HttpListener())
             {
                 listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-                listener.Prefixes.Add("http://localhost:8080/AssetBundles/");
+                listener.Prefixes.Add(m_serverURL);
                 listener.Start();
                 Console.WriteLine("WebServer Starting ...");
 

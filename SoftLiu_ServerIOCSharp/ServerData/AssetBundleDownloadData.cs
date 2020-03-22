@@ -19,14 +19,21 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             get { return m_errorData; }
             set { m_errorData = value; }
         }
-        HttpListenerRequest m_request = null;
 
+        HttpListenerRequest m_request = null;
         HttpListenerResponse m_response = null;
 
+        private VersionCheckData m_versionCheckData = null;
+
+        private const string m_assetBundlesPath = "../../../Resources/GameData/AssetBundles";
 
         private string m_platform = string.Empty;
+        private string m_gameID = string.Empty;
+        private string m_version = string.Empty;
+        private bool m_versionCheck = true;
 
-        private string m_fileName = string.Empty;
+
+        private FileInfo m_fileBuffer = null;
 
         private long m_fileLength = 0;
 
@@ -39,15 +46,30 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             CookieCollection cookies = this.m_request.Cookies;
             if (headers != null)
             {
-                string[] values = headers.GetValues("Content-Platform");
-                if (values != null)
+                string[] gameIDs = headers.GetValues("Content-GameID");
+                if (gameIDs != null)
                 {
-                    m_platform = values.FirstOrDefault();
+                    m_gameID = gameIDs.FirstOrDefault();
+                }
+                string[] platforms = headers.GetValues("Content-Platform");
+                if (platforms != null)
+                {
+                    m_platform = platforms.FirstOrDefault();
+                }
+                string[] versions = headers.GetValues("Content-Version");
+                if (versions != null)
+                {
+                    m_version = versions.FirstOrDefault();
+                }
+                string[] checks = headers.GetValues("Content-VersionCheck");
+                if (checks != null)
+                {
+                    m_versionCheck = Convert.ToBoolean(checks.FirstOrDefault());
                 }
             }
-            if (!string.IsNullOrEmpty(m_platform))
+            if (!string.IsNullOrEmpty(m_platform) && !string.IsNullOrEmpty(m_gameID) && !string.IsNullOrEmpty(m_version))
             {
-                string m_fileDir = new DirectoryInfo("../../../Resources/GameData/AssetBundles").FullName;
+                string m_fileDir = new DirectoryInfo(m_assetBundlesPath + "/" + m_gameID + "/" + m_platform).FullName;
                 if (!Directory.Exists(m_fileDir))
                 {
                     m_errorData = new ErrorData(this.m_response, ErrorType.None);
@@ -55,12 +77,45 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 else
                 {
                     DirectoryInfo infoDir = new DirectoryInfo(m_fileDir);
-                    string strFilePath = infoDir.FullName + "/" + m_platform;
-                    m_fileName = infoDir.FullName + "/" + m_platform + ".zip";
-                    SharpZipUtility.ZipFie(strFilePath, m_fileName);
-                    if (!File.Exists(m_fileName))
+                    if (m_versionCheck)
                     {
-                        m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                        FileInfo[] versions = infoDir.GetFiles();
+                        if (versions == null || versions.Length <= 0)
+                        {
+                            m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                            return;
+                        }
+                        FileInfo[] versionArray = versions.OrderBy(file => { return file.Name; }).ToArray();
+                        string latestVersion = Path.GetFileNameWithoutExtension(versionArray[versionArray.Length - 1].FullName);
+                        int result = latestVersion.CompareTo(m_version);
+                        if (result == 0)
+                        {
+                            // 最新版
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.LatestType, latestVersion);
+                        }
+                        else if (result > 0)
+                        {
+                            // 可更新
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.UpdateType, latestVersion);
+                        }
+                        else
+                        {
+                            // 本地大于服务器
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.None, latestVersion);
+                        }
+                    }
+                    else
+                    {
+                        string fileName = infoDir.FullName + "/" + m_version + ".zip";
+                        if (!File.Exists(fileName))
+                        {
+                            m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                        }
+                        else
+                        {
+                            m_fileBuffer = new FileInfo(fileName);
+                        }
+                        //SharpZipUtility.ZipFie(strFilePath, m_fileName);
                     }
                 }
             }
@@ -76,15 +131,19 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             {
                 m_errorData.Response();
             }
+            else if (m_versionCheckData != null)
+            {
+                m_versionCheckData.Response();
+            }
             else
-            { 
-                using (FileStream fs = File.OpenRead(m_fileName))
+            {
+                using (FileStream fs = File.OpenRead(m_fileBuffer.FullName))
                 {
                     m_response.ContentEncoding = Encoding.UTF8;
                     m_response.ContentLength64 = fs.Length;
                     m_response.SendChunked = false;
                     m_response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
-                    m_response.AddHeader("Content-disposition", "attachment; filename=" + Path.GetFileName(m_fileName));
+                    m_response.AddHeader("Content-disposition", "attachment; filename=" + Path.GetFileName(m_fileBuffer.FullName));
 
                     byte[] buffer = new byte[1024 * 64];
                     int read = 0;

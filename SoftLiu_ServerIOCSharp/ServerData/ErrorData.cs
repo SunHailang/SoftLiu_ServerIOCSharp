@@ -11,6 +11,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
     public enum ErrorType
     {
         None,
+        FileNotExists,
     }
 
     public class ErrorData
@@ -29,6 +30,9 @@ namespace SoftLiu_ServerIOCSharp.ServerData
         {
             switch (m_type)
             {
+                case ErrorType.FileNotExists:
+                    WriteFile("File Not Exists.");
+                    break;
                 default:
                     WriteFile("Is Null.");
                     break;
@@ -41,8 +45,8 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             using (StreamWriter writer = new StreamWriter(this.m_response.OutputStream))
             {
                 writer.Write(mes);
-                
-                m_response.StatusCode = (int)HttpStatusCode.OK;               
+
+                m_response.StatusCode = (int)HttpStatusCode.OK;
 
                 writer.Close();
                 this.m_response.OutputStream.Close();
