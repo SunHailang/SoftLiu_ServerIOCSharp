@@ -38,6 +38,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 case "POST":
                     m_type = MethodType.POST;
                     Console.WriteLine(this.m_Context.Request.UserHostAddress + " -> Use Post Request.");
+                    m_httpMethodData = new HttpMethodPostData(this.m_Context.Request, this.m_Context.Response);
                     break;
                 default:
                     m_errorData = new ErrorData(this.m_Context.Response, ErrorType.None);

@@ -17,7 +17,7 @@ namespace SoftLiu_ServerIOCSharp
         const string m_serverIP = "";
         const int m_serverPort = 20000;
 
-        private const string m_serverURL = "http://localhost:8080/AssetBundles/";
+        private const string m_serverURL = "http://localhost:8080/";
 
         static bool m_isRunning = false;
 
@@ -233,8 +233,7 @@ namespace SoftLiu_ServerIOCSharp
 
         static void PostTask(HttpListenerContext context)
         {
-            HttpListenerPostParaHelper httppost = new HttpListenerPostParaHelper(context);
-            List<HttpListenerPostValue> lis = httppost.GetHttpListenerPostValue();
+            
         }
 
         static void TaskProc(object o)

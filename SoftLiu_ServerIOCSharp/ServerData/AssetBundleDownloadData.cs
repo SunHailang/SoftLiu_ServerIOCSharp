@@ -32,10 +32,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
         private string m_version = string.Empty;
         private bool m_versionCheck = true;
 
-
         private FileInfo m_fileBuffer = null;
-
-        private long m_fileLength = 0;
 
         public AssetBundleDownloadData(HttpListenerRequest request, HttpListenerResponse response)
         {
@@ -85,28 +82,38 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                             m_errorData = new ErrorData(this.m_response, ErrorType.None);
                             return;
                         }
+                        int index = m_version.LastIndexOf('.');
+                        string versionName = m_version.Substring(0, index);
+                        string versionExt = m_version.Substring(index, m_version.Length - index);
+                        FileInfo[] versionArrayData = versions.Where(info => { return (info.Extension == versionExt); }).ToArray();
+                        if (versionArrayData == null || versionArrayData.Length <= 0)
+                        {
+                            m_errorData = new ErrorData(this.m_response, ErrorType.FileNotExists);
+                            return;
+                        }
                         FileInfo[] versionArray = versions.OrderBy(file => { return file.Name; }).ToArray();
-                        string latestVersion = Path.GetFileNameWithoutExtension(versionArray[versionArray.Length - 1].FullName);
-                        int result = latestVersion.CompareTo(m_version);
+                        FileInfo latestVersionInfo = versionArray[versionArray.Length - 1];
+                        string latestVersion = Path.GetFileNameWithoutExtension(latestVersionInfo.FullName);
+                        int result = latestVersion.CompareTo(versionName);
                         if (result == 0)
                         {
                             // 最新版
-                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.LatestType, latestVersion);
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.LatestType, latestVersionInfo.Name);
                         }
                         else if (result > 0)
                         {
                             // 可更新
-                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.UpdateType, latestVersion);
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.UpdateType, latestVersionInfo.Name);
                         }
                         else
                         {
                             // 本地大于服务器
-                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.None, latestVersion);
+                            m_versionCheckData = new VersionCheckData(m_response, VersionCheckType.None, latestVersionInfo.Name);
                         }
                     }
                     else
                     {
-                        string fileName = infoDir.FullName + "/" + m_version + ".zip";
+                        string fileName = infoDir.FullName + "/" + m_version;
                         if (!File.Exists(fileName))
                         {
                             m_errorData = new ErrorData(this.m_response, ErrorType.None);

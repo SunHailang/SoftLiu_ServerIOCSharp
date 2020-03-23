@@ -61,6 +61,12 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 case "AssetBundles":
                     m_functionData = new AssetBundleDownloadData(request, response);
                     break;
+                case "ServerTime":
+                    m_functionData = new ServerTimeData(response);
+                    break;
+                case "PackageUpdate":
+                    m_functionData = new PackageUpdateData(request, response);
+                    break;
                 default:
                     m_errorData = new ErrorData(this.m_response, ErrorType.None);
                     break;
