@@ -17,9 +17,8 @@ namespace SoftLiu_ServerIOCSharp
         const string m_serverIP = "";
         const int m_serverPort = 20000;
 
-        private const string m_serverURL = "http://localhost:8080/";
+        private const string m_serverURL =/* "http://192.168.2.111:8080/";//*/"http://localhost:8080/";
 
-        static bool m_isRunning = false;
 
         static string m_envPath = string.Empty;
 

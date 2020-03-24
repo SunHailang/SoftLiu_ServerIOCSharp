@@ -45,17 +45,19 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             this.m_request = request;
             this.m_response = response;
 
-            NameValueCollection headers = this.m_request.Headers;
-            CookieCollection cookies = this.m_request.Cookies;
-            if (headers != null)
-            {
-                string[] values = headers.GetValues("Content-Function");
-                if (values != null)
-                {
-                    m_function = values.FirstOrDefault();
-                }
-            }
+            //NameValueCollection headers = this.m_request.Headers;
+            //CookieCollection cookies = this.m_request.Cookies;
+            //if (headers != null)
+            //{
+            //    string[] values = headers.GetValues("Content-Function");
+            //    if (values != null)
+            //    {
+            //        m_function = values.FirstOrDefault();
+            //    }
+            //}
 
+            Console.WriteLine(this.m_request.RawUrl.Trim('/'));
+            m_function = this.m_request.RawUrl.Trim('/');
             switch (m_function)
             {
                 case "AssetBundles":
@@ -66,6 +68,9 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     break;
                 case "PackageUpdate":
                     m_functionData = new PackageUpdateData(request, response);
+                    break;
+                case "favicon.ico":
+                    m_errorData = new ErrorData(this.m_response, ErrorType.FaviconIcon);
                     break;
                 default:
                     m_errorData = new ErrorData(this.m_response, ErrorType.None);

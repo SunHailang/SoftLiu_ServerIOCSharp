@@ -161,28 +161,12 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                             bw.Write(buffer, 0, read);
                             bw.Flush();
                         }
-                        //response.ContentLength64 = hello.Length;
-                        //bw.Write(hello, 0, hello.Length);
-                        bw.Close();
                     }
                 }
                 m_response.StatusCode = (int)HttpStatusCode.OK;
                 m_response.StatusDescription = "OK";
                 m_response.OutputStream.Close();
             }
-        }
-
-        public void WriteFile(FileInfo source)
-        {
-            FileInfo item = source;
-            // new FileInfo(source.FullName + "/version.txt");
-            //foreach (DirectoryInfo dir in source.GetDirectories())
-            //{
-            //    WriteFile(dir);
-            //}
-            //foreach (var item in source.GetFiles())
-
-
         }
     }
 }

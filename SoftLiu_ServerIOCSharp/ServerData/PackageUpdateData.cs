@@ -125,6 +125,10 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     }
                 }
             }
+            else
+            {
+                m_errorData = new ErrorData(m_response, ErrorType.None);
+            }
         }
 
 
