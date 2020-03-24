@@ -81,6 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Misc\ContentType.json" />
+    <None Include="Misc\json1.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
   </ItemGroup>
