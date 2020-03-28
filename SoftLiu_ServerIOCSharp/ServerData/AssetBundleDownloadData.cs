@@ -149,8 +149,8 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     m_response.ContentEncoding = Encoding.UTF8;
                     m_response.ContentLength64 = fs.Length;
                     m_response.SendChunked = false;
-                    m_response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
-                    m_response.AddHeader("Content-disposition", "attachment; filename=" + Path.GetFileName(m_fileBuffer.FullName));
+                    m_response.ContentType = StringUtils.GetContneTypeByKey(m_fileBuffer.Extension);
+                    m_response.AddHeader("Content-disposition", "attachment; filename=" + m_fileBuffer.Name);
 
                     byte[] buffer = new byte[1024 * 64];
                     int read = 0;

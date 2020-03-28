@@ -44,8 +44,6 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             {
                 bw.Write(buffer, 0, buffer.Length);
                 bw.Flush();
-
-                bw.Close();
             }
             
             this.m_response.StatusCode = (int)HttpStatusCode.OK;

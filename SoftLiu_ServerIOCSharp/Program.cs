@@ -1,4 +1,6 @@
-﻿using SoftLiu_ServerIOCSharp.ServerData;
+﻿using SoftLiu_ServerIOCSharp.Algorithm;
+using SoftLiu_ServerIOCSharp.Misc;
+using SoftLiu_ServerIOCSharp.ServerData;
 using SoftLiu_ServerIOCSharp.Utils;
 using System;
 using System.Collections.Generic;
@@ -35,6 +37,11 @@ namespace SoftLiu_ServerIOCSharp
 
         static void Main(string[] args)
         {
+            MiscManager.Instance.Init();
+            AlgorithmManager.Instance.Init();
+
+            //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            //Console.WriteLine(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
             //OrderByName();
             //CheckData data = new CheckData(VersionCheckType.UpdateType, "0.1.2");
             //Console.WriteLine(data.ToString());
@@ -97,12 +104,6 @@ namespace SoftLiu_ServerIOCSharp
             Console.Read();
         }
 
-        static void ProcessRequest(Socket handler)
-        {
-            // 构造请求报文
-
-        }
-
         private static void WriteFile(HttpListenerContext cxt, string filePath)
         {
             HttpListenerContext m_ctx = cxt;
@@ -134,7 +135,7 @@ namespace SoftLiu_ServerIOCSharp
                 {
                     response.ContentLength64 = fs.Length;
                     response.SendChunked = false;
-                    response.ContentType = System.Net.Mime.MediaTypeNames.Application.Octet;
+                    response.ContentType = StringUtils.GetContneTypeByKey(".iso");
                     response.AddHeader("Content-disposition", "attachment; filename=" + "cn_windows_10.iso");
 
                     byte[] buffer = new byte[1024 * 64];
@@ -167,95 +168,66 @@ namespace SoftLiu_ServerIOCSharp
 
         private static void HttpSer()
         {
-            using (HttpListener listener = new HttpListener())
+            //1：将传入的数据不断放入BlockingCollection，然后使用Task.Factory.StartNew来处理这个队列，也就是所有数据使用一个线程处理
+            //2：直接使用ThreadPool.QueueUserWorkItem来处理每条数据,这种方法的处理速度更快，但是因为使用的是多个线程，有时候执行的顺序并不是传入的顺序
+
+            Task task = Task.Factory.StartNew(() =>
             {
-                listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-                listener.Prefixes.Add(m_serverURL);
-                listener.Start();
-                Console.WriteLine("WebServer Starting ...");
-
-                int maxThreadNum, portThreadNum;
-                //线程池
-                int minThreadNum;
-                ThreadPool.SetMaxThreads(10, 10);
-                ThreadPool.SetMinThreads(2, 2);
-
-                ThreadPool.GetMaxThreads(out maxThreadNum, out portThreadNum);
-                ThreadPool.GetMinThreads(out minThreadNum, out portThreadNum);
-
-                Console.WriteLine(maxThreadNum + "  -  " + minThreadNum);
-
-                //Task task = Task.Factory.StartNew(() =>
-                //{
-                while (true)
+                using (HttpListener listener = new HttpListener())
                 {
-                    try
-                    {
-                        HttpListenerContext context = listener.GetContext();
+                    listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+                    listener.Prefixes.Add(m_serverURL);
+                    listener.Start();
+                    Console.WriteLine("WebServer Starting ...");
 
-                        Task.Factory.StartNew((ctx) =>
-                        {
-                            try
-                            {
-                                //WriteFile((HttpListenerContext)ctx, @"C:\LargeFile.zip");
-                                ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
-                                contextData.Response();
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine("Two Error: " + e.Message);
-                            }
-                        }, context, TaskCreationOptions.LongRunning);
-                    }
-                    catch (Exception e)
+                    int maxThreadNum, portThreadNum;
+                    //线程池
+                    int minThreadNum;
+                    ThreadPool.SetMaxThreads(10, 10);
+                    ThreadPool.SetMinThreads(2, 2);
+
+                    ThreadPool.GetMaxThreads(out maxThreadNum, out portThreadNum);
+                    ThreadPool.GetMinThreads(out minThreadNum, out portThreadNum);
+
+                    Console.WriteLine(maxThreadNum + "  -  " + minThreadNum);
+                    while (true)
                     {
-                        Console.WriteLine("One Errpr: " + e.Message);
-                        //break;
+                        try
+                        {
+                            HttpListenerContext context = listener.GetContext();
+                            ThreadPool.QueueUserWorkItem((ctx) =>
+                            {
+                                try
+                                {
+                                    ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
+                                    contextData.Response();
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine("Two Error: " + e.Message);
+                                }
+                            }, context);
+
+                            //Task.Factory.StartNew((ctx) =>
+                            //{
+                            //    try
+                            //    {
+                            //        ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
+                            //        contextData.Response();
+                            //    }
+                            //    catch (Exception e)
+                            //    {
+                            //        Console.WriteLine("Two Error: " + e.Message);
+                            //    }
+                            //}, context, TaskCreationOptions.LongRunning);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("One Errpr: " + e.Message);
+                        }
                     }
                 }
-                //}, TaskCreationOptions.AttachedToParent);
-
-                //while (true)
-                //{
-                //    HttpListenerContext context = listener.GetContext();
-                //    try
-                //    {
-                //        WriteFile(context, "");
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        Console.WriteLine("Write File Error: " + e.Message);
-                //    }
-                //}
-            }
-        }
-
-        static void PostTask(HttpListenerContext context)
-        {
-            
-        }
-
-        static void TaskProc(object o)
-        {
-            HttpListenerContext ctx = (HttpListenerContext)o;
-
-            ctx.Response.StatusCode = 200;//设置返回给客服端http状态代码
-
-            //string type = ctx.Request.QueryString["type"];
-            //string userId = ctx.Request.QueryString["userId"];
-            //string password = ctx.Request.QueryString["password"];
-            //string filename = Path.GetFileName(ctx.Request.RawUrl);
-            //string userName = HttpUtility.ParseQueryString(filename).Get("userName");//避免中文乱码
-
-            //进行处理
-
-            //使用Writer输出http响应代码
-            using (StreamWriter writer = new StreamWriter(ctx.Response.OutputStream))
-            {
-                writer.Write("处理结果");
-                writer.Close();
-                ctx.Response.Close();
-            }
+            }, TaskCreationOptions.LongRunning);
         }
     }
 }
