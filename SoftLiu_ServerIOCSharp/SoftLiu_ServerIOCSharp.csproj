@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerData\AssetBundleDownloadData.cs" />
     <Compile Include="ServerData\PackageUpdateData.cs" />
+    <Compile Include="ServerData\POST\Data\LoginData.cs" />
     <Compile Include="ServerData\ServerTimeData.cs" />
     <Compile Include="ServerData\ErrorData.cs" />
     <Compile Include="ServerData\POST\HttpMethodPostData.cs" />
@@ -89,10 +90,13 @@
     <None Include="App.config" />
     <None Include="Misc\ContentType.json" />
     <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="LibrarySupport\" />
+    <Content Include="LibrarySupport\TFramework.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

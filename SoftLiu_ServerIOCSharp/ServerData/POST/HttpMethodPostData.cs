@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SoftLiu_ServerIOCSharp.ServerData.POST.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using TFramework.Utils;
 
 namespace SoftLiu_ServerIOCSharp.ServerData
 {
@@ -24,6 +26,8 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             set { m_request = value; }
         }
 
+        private string m_function = string.Empty;
+
         private HttpListenerResponse m_response = null;
         public HttpListenerResponse ListenerResponse
         {
@@ -31,11 +35,10 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             set { m_response = value; }
         }
 
-        private IFunctionData m_functionData = null;
         public IFunctionData FunctionData
         {
-            get { return m_functionData; }
-            set { m_functionData = value; }
+            get;
+            set;
         }
 
         public HttpMethodPostData(HttpListenerRequest request, HttpListenerResponse response)
@@ -43,29 +46,37 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             this.m_request = request;
             this.m_response = response;
 
-
-            using (Stream s = m_request.InputStream)
+            Console.WriteLine("POST: " + this.m_request.RawUrl.Trim('/'));
+            m_function = this.m_request.RawUrl.Trim('/');
+            switch (m_function)
             {
-                using (StreamReader reader = new StreamReader(s, Encoding.UTF8))
-                {
-                    string content = reader.ReadToEnd();
-                    Console.WriteLine(content);
-                }
+                case "Login":
+                    FunctionData = new LoginData(m_request, m_response);
+                    break;
+                default:
+                    break;
             }
 
         }
 
         public void Response()
         {
-            //使用Writer输出http响应代码
-            using (StreamWriter writer = new StreamWriter(this.m_response.OutputStream))
+            if (FunctionData != null)
             {
-                writer.Write("收到!");
+                FunctionData.Response();
+            }
+            else
+            {
+                //使用Writer输出http响应代码
+                using (StreamWriter writer = new StreamWriter(this.m_response.OutputStream))
+                {
+                    writer.Write("收到!");
 
-                m_response.StatusCode = (int)HttpStatusCode.OK;
+                    m_response.StatusCode = (int)HttpStatusCode.OK;
 
-                writer.Close();
-                this.m_response.OutputStream.Close();
+                    writer.Close();
+                    this.m_response.OutputStream.Close();
+                }
             }
         }
     }

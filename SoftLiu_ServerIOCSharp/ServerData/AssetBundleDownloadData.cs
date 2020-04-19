@@ -69,7 +69,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 string m_fileDir = new DirectoryInfo(m_assetBundlesPath + "/" + m_gameID + "/" + m_platform).FullName;
                 if (!Directory.Exists(m_fileDir))
                 {
-                    m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                    m_errorData = new ErrorData(this.m_response, ErrorType.None, "AssetBundleDownloadData Error: file Directory not exists.");
                 }
                 else
                 {
@@ -79,7 +79,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                         FileInfo[] versions = infoDir.GetFiles();
                         if (versions == null || versions.Length <= 0)
                         {
-                            m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                            m_errorData = new ErrorData(this.m_response, ErrorType.None, "AssetBundleDownloadData Error: not version.");
                             return;
                         }
                         int index = m_version.LastIndexOf('.');
@@ -88,7 +88,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                         FileInfo[] versionArrayData = versions.Where(info => { return (info.Extension == versionExt); }).ToArray();
                         if (versionArrayData == null || versionArrayData.Length <= 0)
                         {
-                            m_errorData = new ErrorData(this.m_response, ErrorType.FileNotExists);
+                            m_errorData = new ErrorData(this.m_response, ErrorType.FileNotExists, "AssetBundleDownloadData Error: version arrary data is null.");
                             return;
                         }
                         FileInfo[] versionArray = versions.OrderBy(file => { return file.Name; }).ToArray();
@@ -116,7 +116,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                         string fileName = infoDir.FullName + "/" + m_version;
                         if (!File.Exists(fileName))
                         {
-                            m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                            m_errorData = new ErrorData(this.m_response, ErrorType.None, "AssetBundleDownloadData Error: version file not exists.");
                         }
                         else
                         {
@@ -128,7 +128,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             }
             else
             {
-                m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                m_errorData = new ErrorData(this.m_response, ErrorType.None, "AssetBundleDownloadData Error: Unknow error.");
             }
         }
 

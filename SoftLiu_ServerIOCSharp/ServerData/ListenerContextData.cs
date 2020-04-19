@@ -41,9 +41,10 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     m_httpMethodData = new HttpMethodPostData(this.m_Context.Request, this.m_Context.Response);
                     break;
                 default:
-                    m_errorData = new ErrorData(this.m_Context.Response, ErrorType.None);
+                    m_errorData = new ErrorData(this.m_Context.Response, ErrorType.None, "ListenerContextData Unknow Error.");
                     break;
             }
+
         }
 
         public void Response()

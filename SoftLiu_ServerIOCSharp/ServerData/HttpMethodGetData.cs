@@ -30,12 +30,11 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             get { return m_functionData; }
             set { m_functionData = value; }
         }
-
-        private ErrorData m_errorData = null;
+        
         public ErrorData ErrorData
         {
-            get { return m_errorData; }
-            set { m_errorData = value; }
+            get;
+            set;
         }
 
         private string m_function = string.Empty;
@@ -70,15 +69,14 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     m_functionData = new PackageUpdateData(request, response);
                     break;
                 case "favicon.ico":
-                    m_errorData = new ErrorData(this.m_response, ErrorType.FaviconIcon);
+                    ErrorData = new ErrorData(this.m_response, ErrorType.FaviconIcon, "HttpMethodGetData favicon.ico Request.");
                     break;
                 default:
-                    m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                    ErrorData = new ErrorData(this.m_response, ErrorType.None, "HttpMethodGetData Unknow Error.");
                     break;
             }
         }
-
-
+        
         public void Response()
         {
             if (m_functionData != null)
@@ -87,7 +85,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             }
             else
             {
-                m_errorData.Response();
+                ErrorData.Response();
             }
         }
     }

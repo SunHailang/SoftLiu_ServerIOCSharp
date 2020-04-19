@@ -14,6 +14,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
         None,
         FaviconIcon,
         FileNotExists,
+        LoginDataType,
     }
 
     public class ErrorData
@@ -22,10 +23,13 @@ namespace SoftLiu_ServerIOCSharp.ServerData
 
         private ErrorType m_type = ErrorType.None;
 
-        public ErrorData(HttpListenerResponse response, ErrorType type)
+        private string m_errorText = "";
+
+        public ErrorData(HttpListenerResponse response, ErrorType type, string errorText)
         {
-            m_response = response;
-            m_type = type;
+            this.m_response = response;
+            this.m_type = type;
+            this.m_errorText = errorText;
         }
 
         public void Response()
@@ -33,7 +37,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             switch (m_type)
             {
                 case ErrorType.FileNotExists:
-                    byte[] bufferFileNotExists = Encoding.UTF8.GetBytes("File Not Exists.");
+                    byte[] bufferFileNotExists = Encoding.UTF8.GetBytes(this.m_errorText);
                     WriteFile(bufferFileNotExists);
                     break;
                 case ErrorType.FaviconIcon:
@@ -46,13 +50,13 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     }
                     else
                     {
-                        bufferFaviconIcon = Encoding.UTF8.GetBytes("File Not Exists.");
+                        bufferFaviconIcon = Encoding.UTF8.GetBytes(this.m_errorText);
                         //bufferFaviconIcon = Encoding.UTF8.GetBytes("<link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"favicon.ico\">");
                     }
                     WriteFile(bufferFaviconIcon, fileInfoFaviconIcon);
                     break;
                 default:
-                    byte[] bufferNone = Encoding.UTF8.GetBytes("Is Null.");
+                    byte[] bufferNone = Encoding.UTF8.GetBytes(this.m_errorText);
                     WriteFile(bufferNone);
                     break;
             }

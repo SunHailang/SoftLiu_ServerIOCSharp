@@ -68,7 +68,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 string[] inputVersions = m_version.Split('-');
                 if (inputVersions.Length < 2)
                 {
-                    m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                    m_errorData = new ErrorData(this.m_response, ErrorType.None, "PackageUpdateData Error: Input Versions Length < 2");
                     return;
                 }
                 string packName = inputVersions[0];
@@ -77,7 +77,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                 string m_fileDir = new DirectoryInfo(m_packagePath + "/" + m_platform + "/" + m_gameID + "/" + packName).FullName;
                 if (!Directory.Exists(m_fileDir))
                 {
-                    m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                    m_errorData = new ErrorData(this.m_response, ErrorType.None, "PackageUpdateData Error: m_fileDir path not existis.");
                 }
                 else
                 {
@@ -85,7 +85,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     FileInfo[] versions = infoDir.GetFiles();
                     if (versions == null || versions.Length <= 0)
                     {
-                        m_errorData = new ErrorData(this.m_response, ErrorType.None);
+                        m_errorData = new ErrorData(this.m_response, ErrorType.None, "PackageUpdateData Error: Version Directory not versions.");
                         return;
                     }
                     FileInfo[] versionArray = versions.OrderBy(file => { return file.Name; }).ToArray();
@@ -120,14 +120,14 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                         }
                         else
                         {
-                            m_errorData = new ErrorData(m_response, ErrorType.FileNotExists);
+                            m_errorData = new ErrorData(m_response, ErrorType.FileNotExists, "PackageUpdateData Error: not find lastest version file.");
                         }
                     }
                 }
             }
             else
             {
-                m_errorData = new ErrorData(m_response, ErrorType.None);
+                m_errorData = new ErrorData(m_response, ErrorType.None, "PackageUpdateData Error: Unknow Error.");
             }
         }
 
