@@ -41,7 +41,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     WriteFile(bufferFileNotExists);
                     break;
                 case ErrorType.FaviconIcon:
-                    string faviconPath = "../../../Resources/favicon.ico";
+                    string faviconPath = "Resources/favicon.ico";
                     byte[] bufferFaviconIcon = null;
                     FileInfo fileInfoFaviconIcon = null;
                     if (File.Exists(faviconPath))

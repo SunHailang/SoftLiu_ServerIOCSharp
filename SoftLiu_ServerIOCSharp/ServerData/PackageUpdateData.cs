@@ -11,7 +11,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
 {
     public class PackageUpdateData : IFunctionData
     {
-        private const string m_packagePath = "../../../Resources/GameData/PackageData/";
+        private const string m_packagePath = "Resources/GameData/PackageData/";
 
         private ErrorData m_errorData = null;
         public ErrorData ErrorData

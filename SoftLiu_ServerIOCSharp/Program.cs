@@ -1,6 +1,7 @@
 ﻿using SoftLiu_ServerIOCSharp.Algorithm;
 using SoftLiu_ServerIOCSharp.Misc;
 using SoftLiu_ServerIOCSharp.ServerData;
+using SoftLiu_ServerIOCSharp.SocketData;
 using SoftLiu_ServerIOCSharp.Utils;
 using System;
 using System.Collections.Generic;
@@ -24,83 +25,27 @@ namespace SoftLiu_ServerIOCSharp
 
         static string m_envPath = string.Empty;
 
-        static void OrderByName()
-        {
-            DirectoryInfo dir = new DirectoryInfo("../../../Resources/GameData/AssetBundles/Android");
-            FileInfo[] infos = dir.GetFiles();
-            FileInfo[] list = infos.OrderBy(file => { return file.Name; }).ToArray();
-            foreach (var item in list)
-            {
-                Console.WriteLine(item.Name);
-            }
-        }
 
         static void Main(string[] args)
         {
             MiscManager.Instance.Init();
-            AlgorithmManager.Instance.Init();
 
-            //Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            //Console.WriteLine(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
-            //OrderByName();
-            //CheckData data = new CheckData(VersionCheckType.UpdateType, "0.1.2");
-            //Console.WriteLine(data.ToString());
-            //m_envPath = Environment.CurrentDirectory + @"\..\..\cn_windows_10.iso";
+            int maxThreadNum, portThreadNum;
+            //线程池
+            int minThreadNum;
+            ThreadPool.SetMaxThreads(10, 10);
+            ThreadPool.SetMinThreads(2, 2);
 
-            //string path = new DirectoryInfo("../../../../").FullName;
-            //Console.WriteLine(path);
+            ThreadPool.GetMaxThreads(out maxThreadNum, out portThreadNum);
+            ThreadPool.GetMinThreads(out minThreadNum, out portThreadNum);
 
-            //if (File.Exists(path + "/cn_windows_10.iso"))
-            //{
-            //    Console.WriteLine("True");
-            //}
-            //else
-            //{
-            //    Console.WriteLine("False");
-            //}
+            Console.WriteLine(maxThreadNum + "  -  " + minThreadNum);
 
-            //Console.WriteLine(m_envPath);
+            // 启动HTTP服务器
+            HttpServer();
+            // 启动Socket服务器
+            SocketTCPServerStart();
 
-            //string data = "attachment; filename=" + "cn_windows_10.iso";
-            //string[] data1 = data.Split(';');
-            //string data2 = "";
-            //for (int i = 0; i < data1.Length; i++)
-            //{
-            //    if (data1[i].Trim().Contains("filename="))
-            //    {
-            //        data2 = data1[i];
-            //        break;
-            //    }
-            //}
-            //string[] data3 = data.Split('=');
-            //if (data3.Length==2)
-            //{
-            //    Console.WriteLine(data3[1]);
-            //}
-            //Console.WriteLine(data3.Length);
-
-            //string m_fileDir = new DirectoryInfo("../../../Resources/GameData/AssetBundles/" + "Android").FullName;
-            //string tar = new DirectoryInfo("../../../").FullName + "Resources/GameData/AssetBundles";
-            //SharpZipUtility.ZipFie(m_fileDir, tar + "/android.zip");
-            //SharpZipUtility.UnZipFile(tar + "/android.zip", tar);
-            //Console.WriteLine("UnZipFile Complete.");
-
-            HttpSer();
-
-
-
-            // 创建 Socket 服务器
-            //Socket serverSocet = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            //serverSocet.Bind(new IPEndPoint(IPAddress.Parse(m_serverIP), m_serverPort));
-            //serverSocet.Listen(10);
-            //m_isRunning = true;
-
-            //while (m_isRunning)
-            //{
-            //    Socket clientSocket = serverSocet.Accept();
-            //    Thread requestThread = new Thread(() => { });
-            //    requestThread.Start();
-            //}
             Console.Read();
         }
 
@@ -166,7 +111,7 @@ namespace SoftLiu_ServerIOCSharp
 
         }
 
-        private static void HttpSer()
+        private static void HttpServer()
         {
             //1：将传入的数据不断放入BlockingCollection，然后使用Task.Factory.StartNew来处理这个队列，也就是所有数据使用一个线程处理
             //2：直接使用ThreadPool.QueueUserWorkItem来处理每条数据,这种方法的处理速度更快，但是因为使用的是多个线程，有时候执行的顺序并不是传入的顺序
@@ -180,16 +125,6 @@ namespace SoftLiu_ServerIOCSharp
                     listener.Start();
                     Console.WriteLine("WebServer Starting ...");
 
-                    int maxThreadNum, portThreadNum;
-                    //线程池
-                    int minThreadNum;
-                    ThreadPool.SetMaxThreads(10, 10);
-                    ThreadPool.SetMinThreads(2, 2);
-
-                    ThreadPool.GetMaxThreads(out maxThreadNum, out portThreadNum);
-                    ThreadPool.GetMinThreads(out minThreadNum, out portThreadNum);
-
-                    Console.WriteLine(maxThreadNum + "  -  " + minThreadNum);
                     while (true)
                     {
                         try
@@ -207,25 +142,28 @@ namespace SoftLiu_ServerIOCSharp
                                     Console.WriteLine("Two Error: " + e.Message);
                                 }
                             }, context);
-
-                            //Task.Factory.StartNew((ctx) =>
-                            //{
-                            //    try
-                            //    {
-                            //        ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
-                            //        contextData.Response();
-                            //    }
-                            //    catch (Exception e)
-                            //    {
-                            //        Console.WriteLine("Two Error: " + e.Message);
-                            //    }
-                            //}, context, TaskCreationOptions.LongRunning);
                         }
                         catch (Exception e)
                         {
                             Console.WriteLine("One Errpr: " + e.Message);
                         }
                     }
+                }
+            }, TaskCreationOptions.LongRunning);
+        }
+
+        private static void SocketTCPServerStart()
+        {
+            Task task = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    SocketTCPServer socketServer = new SocketTCPServer();
+                    socketServer.StartAsyncSocket();
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine($"SocketTCPServerStart Error: {error.Message}");
                 }
             }, TaskCreationOptions.LongRunning);
         }
