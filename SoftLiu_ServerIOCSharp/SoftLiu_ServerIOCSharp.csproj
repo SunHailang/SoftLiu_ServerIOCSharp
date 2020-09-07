@@ -79,7 +79,8 @@
     <Compile Include="ServerData\IFunctionData.cs" />
     <Compile Include="ServerData\ListenerContextData.cs" />
     <Compile Include="ServerData\VersionCheckData.cs" />
-    <Compile Include="SocketData\SocketTCPServer.cs" />
+    <Compile Include="SocketData\TCPServer\SocketTCPServer.cs" />
+    <Compile Include="SocketData\UDPServer\SocketUDPServer.cs" />
     <Compile Include="Utils\FileUtility.cs" />
     <Compile Include="Utils\SharpZipUtility.cs" />
     <Compile Include="Utils\StringUtils.cs" />

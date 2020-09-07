@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TFramework.Utils;
 
-namespace SoftLiu_ServerIOCSharp.SocketData
+namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
 {
     public class SocketTCPServer : IDisposable
     {
-        private Socket m_tcpSccket = null;
+        private Socket m_tcpSocket = null;
 
         private Dictionary<string, Socket> m_tcpSocketClientList = null;
 
@@ -27,11 +27,11 @@ namespace SoftLiu_ServerIOCSharp.SocketData
                 Console.WriteLine($"SocketTCPServer Socket TCP Port Error: {socketPort}");
                 return;
             }
-            m_tcpSccket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            m_tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPAddress address = IPAddress.Parse(socketIP);
             IPEndPoint point = new IPEndPoint(address, port);
-            m_tcpSccket.Bind(point);
-            m_tcpSccket.Listen(10);
+            m_tcpSocket.Bind(point);
+            m_tcpSocket.Listen(10);
             Console.WriteLine("SocketTCPServer Socket Create Success.");
             m_tcpSocketClientList = new Dictionary<string, Socket>();
             // 大小设置为 1M
@@ -42,7 +42,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData
         /// </summary>
         public void StartAsyncSocket()
         {
-            m_tcpSccket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSccket);
+            m_tcpSocket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSocket);
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -63,7 +63,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData
             }
             finally
             {
-                m_tcpSccket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSccket);
+                m_tcpSocket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSocket);
             }
         }
 
@@ -140,11 +140,11 @@ namespace SoftLiu_ServerIOCSharp.SocketData
 
         public void Dispose()
         {
-            if (m_tcpSccket != null)
+            if (m_tcpSocket != null)
             {
-                m_tcpSccket.Close();
+                m_tcpSocket.Close();
             }
-            m_tcpSccket = null;
+            m_tcpSocket = null;
             m_tcpSocketClientList = null;
             m_recvBuffer = null;
         }

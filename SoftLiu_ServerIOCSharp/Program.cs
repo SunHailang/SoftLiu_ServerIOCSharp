@@ -1,7 +1,8 @@
 ﻿using SoftLiu_ServerIOCSharp.Algorithm;
 using SoftLiu_ServerIOCSharp.Misc;
 using SoftLiu_ServerIOCSharp.ServerData;
-using SoftLiu_ServerIOCSharp.SocketData;
+using SoftLiu_ServerIOCSharp.SocketData.TCPServer;
+using SoftLiu_ServerIOCSharp.SocketData.UDPServer;
 using SoftLiu_ServerIOCSharp.Utils;
 using System;
 using System.Collections.Generic;
@@ -43,8 +44,11 @@ namespace SoftLiu_ServerIOCSharp
 
             // 启动HTTP服务器
             HttpServer();
-            // 启动Socket服务器
+            // 启动 TCP Socket服务器
             SocketTCPServerStart();
+
+            // 启动 UDP Socket服务器
+            SocketUDPServerStart();
 
             Console.Read();
         }
@@ -164,6 +168,22 @@ namespace SoftLiu_ServerIOCSharp
                 catch (Exception error)
                 {
                     Console.WriteLine($"SocketTCPServerStart Error: {error.Message}");
+                }
+            }, TaskCreationOptions.LongRunning);
+        }
+
+        private static void SocketUDPServerStart()
+        {
+            Task task = Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    SocketUDPServer socketServer = new SocketUDPServer();
+                    //socketServer.StartAsyncSocket();
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine($"SocketUDPServer Error: {error.Message}");
                 }
             }, TaskCreationOptions.LongRunning);
         }
