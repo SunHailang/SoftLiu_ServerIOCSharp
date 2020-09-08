@@ -19,6 +19,8 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
 
         private EndPoint m_clientEndPoint = null;
 
+        private List<EndPoint> m_clientList = new List<EndPoint>();
+
         public SocketUDPServer()
         {
             Console.WriteLine("udp server starting...");
@@ -41,15 +43,6 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
             m_clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
             m_udpServer.BeginReceiveFrom(m_recvBuffer, 0, m_recvBuffer.Length, SocketFlags.None, ref m_clientEndPoint, new AsyncCallback(AcceptCallback), m_udpServer);
-            //while (true)
-            //{
-            //    int length = m_udpServer.ReceiveFrom(m_recvBuffer, ref m_serverEndPoint);
-            //    if (length > 0)
-            //    {
-            //        string recv = Encoding.UTF8.GetString(m_recvBuffer, 0, length);
-            //        Console.WriteLine("recv: " + recv);
-            //    }
-            //}
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -58,12 +51,19 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
             try
             {
                 len = m_udpServer.EndReceiveFrom(ar, ref m_clientEndPoint);
-                string recv = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
-                Console.WriteLine($"recv callback:{recv} , ip:{m_clientEndPoint.ToString()}");
+                if (len > 0)
+                {
+                    if (!m_clientList.Contains(m_clientEndPoint))
+                    {
+                        m_clientList.Add(m_clientEndPoint);
+                    }
 
-                byte[] buffer = Encoding.UTF8.GetBytes("recv");
-                m_udpServer.SendTo(buffer, m_clientEndPoint);
+                    string recv = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
+                    Console.WriteLine($"recv callback:{recv} , ip:{m_clientEndPoint.ToString()}");
 
+                    byte[] buffer = Encoding.UTF8.GetBytes("recv");
+                    m_udpServer.SendTo(buffer, m_clientEndPoint);
+                }
             }
             catch (Exception error)
             {

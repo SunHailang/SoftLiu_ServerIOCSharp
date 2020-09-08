@@ -97,6 +97,8 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                 }
                 string str = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
                 Console.WriteLine($"Client-[{client.RemoteEndPoint.ToString()}]:\n{str}");
+                byte[] buffer = Encoding.UTF8.GetBytes($"Recv Data: {str}");
+                client.Send(buffer);
 
                 StartReceive(client);
             }
