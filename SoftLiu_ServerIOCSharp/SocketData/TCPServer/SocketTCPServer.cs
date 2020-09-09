@@ -32,6 +32,9 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             IPEndPoint point = new IPEndPoint(address, port);
             m_tcpSocket.Bind(point);
             m_tcpSocket.Listen(10);
+
+            //m_tcpSocket.
+
             Console.WriteLine("SocketTCPServer Socket Create Success.");
             m_tcpSocketClientList = new Dictionary<string, Socket>();
             // 大小设置为 1M
