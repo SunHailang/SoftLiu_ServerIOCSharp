@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\AlgorithmManager.cs" />
-    <Compile Include="Misc\Code\MiscManager.cs" />
+    <Compile Include="MiscManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerData\AssetBundleDownloadData.cs" />
@@ -79,6 +79,17 @@
     <Compile Include="ServerData\IFunctionData.cs" />
     <Compile Include="ServerData\ListenerContextData.cs" />
     <Compile Include="ServerData\VersionCheckData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionServerTimeData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionLoginData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionMatchconfData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionPushData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionPvpVariationData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionQueueData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionRejoinData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionUploadData.cs" />
+    <Compile Include="SocketData\SocketManager.cs" />
+    <Compile Include="SocketData\SocketProtocolData.cs" />
     <Compile Include="SocketData\TCPServer\SocketTCPServer.cs" />
     <Compile Include="SocketData\UDPServer\SocketUDPServer.cs" />
     <Compile Include="Utils\FileUtility.cs" />
@@ -90,13 +101,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Misc\ContentType.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Misc\SocketServerData.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="ThreadLibrary\TFramework.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy  /e/y/i/f/s  $(ProjectDir)Misc  $(OutDir)Misc</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TFramework.Utils;
@@ -45,7 +46,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
         /// </summary>
         public void StartAsyncSocket()
         {
-            m_tcpSocket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSocket);
+            m_tcpSocket.BeginAccept(AcceptCallback, m_tcpSocket);
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -57,7 +58,6 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                 // 有客户端连接进来
                 Console.WriteLine($"SocketTCPServer Client Connect Success, Client:{client.RemoteEndPoint.ToString()}");
                 AddClientList(client);
-                //client.Send(Encoding.UTF8.GetBytes("Welcome, Connected."));
                 StartReceive(client);
             }
             catch (Exception error)
@@ -66,7 +66,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             }
             finally
             {
-                m_tcpSocket.BeginAccept(new AsyncCallback(AcceptCallback), m_tcpSocket);
+                m_tcpSocket.BeginAccept(AcceptCallback, m_tcpSocket);
             }
         }
 
@@ -94,14 +94,17 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             {
                 Socket client = iar.AsyncState as Socket;
                 int len = client.EndReceive(iar);
-                if (len == 0)
+                if (len <= 0)
                 {
                     return;
                 }
-                string str = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
-                Console.WriteLine($"Client-[{client.RemoteEndPoint.ToString()}]:\n{str}");
-                byte[] buffer = Encoding.UTF8.GetBytes($"Recv Data: {str}");
-                client.Send(buffer);
+                string recvData = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
+                //Console.WriteLine($"Client-[{client.RemoteEndPoint.ToString()}]:\n{recvData}");
+                // dealwith recv data
+                ActionHandOut(recvData, client);
+
+                //byte[] buffer = Encoding.UTF8.GetBytes($"Recv Data: {recvData}");
+                //client.Send(buffer);
 
                 StartReceive(client);
             }
@@ -116,7 +119,41 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                     client.Close();
                 }
             }
+        }
 
+        private void ActionHandOut(Socket client, string recvData)
+        {
+            Dictionary<string, object> dataRecvDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(recvData);
+            if (dataRecvDic != null && dataRecvDic.ContainsKey("action"))
+            {
+                if (dataRecvDic != null && dataRecvDic.ContainsKey("action"))
+                {
+                    string action = dataRecvDic["action"].ToString();
+
+                    IEnumerable<SocketProtocolData> protocols = SocketManager.Instance.ProtocolDatas.Where(data => { return data.Protocol == action; });
+                    SocketProtocolData protocol = protocols.FirstOrDefault();
+                    if (protocols != null)
+                    {
+                        // 获取当前程序集 
+                        Assembly assembly = Assembly.GetExecutingAssembly();
+                        //dynamic obj = assembly.CreateInstance("类的完全限定名（即包括命名空间）");
+                        dynamic obj = assembly.CreateInstance($"SoftLiu_ServerIOCSharp.SocketData.ProtocolData.{protocol.Type}");
+                        if (obj is ActionData)
+                        {
+                            ActionData data = obj as ActionData;
+                            data.Init(recvData);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"WebSocketProtocolData CreateInstance is null, action: {action}, type: {protocol.Type}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"WebSocketProtocolData is null, action: {action}");
+                    }
+                }
+            }
         }
 
         private void AddClientList(Socket client)
