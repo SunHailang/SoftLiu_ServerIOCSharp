@@ -42,7 +42,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
 
             m_clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
-            m_udpServer.BeginReceiveFrom(m_recvBuffer, 0, m_recvBuffer.Length, SocketFlags.None, ref m_clientEndPoint, new AsyncCallback(AcceptCallback), m_udpServer);
+            m_udpServer.BeginReceiveFrom(m_recvBuffer, 0, m_recvBuffer.Length, SocketFlags.None, ref m_clientEndPoint, AcceptCallback, m_udpServer);
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -73,7 +73,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
             {
                 if (m_udpServer != null)
                     m_udpServer.BeginReceiveFrom(m_recvBuffer, 0, m_recvBuffer.Length, SocketFlags.None,
-                ref m_clientEndPoint, new AsyncCallback(AcceptCallback), m_udpServer);
+                ref m_clientEndPoint, AcceptCallback, m_udpServer);
             }
         }
     }

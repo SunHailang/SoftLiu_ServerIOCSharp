@@ -18,10 +18,12 @@ namespace SoftLiu_ServerIOCSharp
 {
     class Program
     {
-        const string m_serverIP = "";
-        const int m_serverPort = 20000;
+        private const string m_serverURL = 
+            //"http://127.0.0.1:8080/";
+            //"http://10.192.91.40:8080/";
+            "http://localhost:8080/";
 
-        private const string m_serverURL =/* "http://192.168.2.111:8080/";//*/"http://localhost:8080/";
+        private static HttpListener listener = null;
 
 
         static string m_envPath = string.Empty;
@@ -120,72 +122,44 @@ namespace SoftLiu_ServerIOCSharp
             //1：将传入的数据不断放入BlockingCollection，然后使用Task.Factory.StartNew来处理这个队列，也就是所有数据使用一个线程处理
             //2：直接使用ThreadPool.QueueUserWorkItem来处理每条数据,这种方法的处理速度更快，但是因为使用的是多个线程，有时候执行的顺序并不是传入的顺序
 
-            Task task = Task.Factory.StartNew(() =>
-            {
-                using (HttpListener listener = new HttpListener())
-                {
-                    listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-                    listener.Prefixes.Add(m_serverURL);
-                    listener.Start();
-                    Console.WriteLine("WebServer Starting ...");
+            listener = new HttpListener();
+            listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+            listener.Prefixes.Add(m_serverURL);
+            listener.Start();
+            Console.WriteLine("WebServer Starting ...");
+            // HttpListener 异步监听
+            listener.BeginGetContext(HttpListenerGetContext, listener);
+        }
 
-                    while (true)
-                    {
-                        try
-                        {
-                            HttpListenerContext context = listener.GetContext();
-                            ThreadPool.QueueUserWorkItem((ctx) =>
-                            {
-                                try
-                                {
-                                    ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
-                                    contextData.Response();
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine("Two Error: " + e.Message);
-                                }
-                            }, context);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("One Errpr: " + e.Message);
-                        }
-                    }
+        private static void HttpListenerGetContext(IAsyncResult iar)
+        {
+            HttpListener lis = iar.AsyncState as HttpListener;
+            HttpListenerContext context = lis.EndGetContext(iar);
+            ThreadPool.QueueUserWorkItem((ctx) =>
+            {
+                try
+                {
+                    ListenerContextData contextData = new ListenerContextData((HttpListenerContext)ctx);
+                    contextData.Response();
                 }
-            }, TaskCreationOptions.LongRunning);
+                catch (Exception e)
+                {
+                    Console.WriteLine("GetContext QueueUserWorkItem Error: " + e.Message);
+                }
+            }, context);
+
+            listener.BeginGetContext(HttpListenerGetContext, listener);
         }
 
         private static void SocketTCPServerStart()
         {
-            Task task = Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    SocketTCPServer socketServer = new SocketTCPServer();
-                    socketServer.StartAsyncSocket();
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine($"SocketTCPServerStart Error: {error.Message}");
-                }
-            }, TaskCreationOptions.LongRunning);
+            SocketTCPServer socketServer = new SocketTCPServer();
+            socketServer.StartAsyncSocket();
         }
 
         private static void SocketUDPServerStart()
         {
-            Task task = Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    SocketUDPServer socketServer = new SocketUDPServer();
-                    //socketServer.StartAsyncSocket();
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine($"SocketUDPServer Error: {error.Message}");
-                }
-            }, TaskCreationOptions.LongRunning);
+            SocketUDPServer socketServer = new SocketUDPServer();
         }
     }
 }
