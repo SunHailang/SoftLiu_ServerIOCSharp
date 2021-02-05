@@ -7,10 +7,10 @@ namespace SoftLiu_ServerIOCSharp.SocketData.ProtocolData
 {
     public class ActionMatchconfData : ActionData
     {
-        public override void Init(Socket client, string responseJson)
+        public override void Init(Socket client, string recvJson)
         {
             //Console.WriteLine($"ActionMatchconfData Response: {responseJson}");
-            Dictionary<string, object> dataRecvDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(responseJson);
+            Dictionary<string, object> dataRecvDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(recvJson);
         }
     }
 }

@@ -18,6 +18,8 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
 
         private byte[] m_recvBuffer = null;
 
+        private Assembly m_assembly = null;
+
         public SocketTCPServer()
         {
             string socketIP = ConfigurationUtils.Instance.GetAppSettingValue("SocketServerIP");
@@ -40,6 +42,9 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             m_tcpSocketClientList = new Dictionary<string, Socket>();
             // 大小设置为 1M
             m_recvBuffer = new byte[1024 * 1024];
+
+            // 获取当前程序集 
+            m_assembly = Assembly.GetExecutingAssembly();
         }
         /// <summary>
         /// 开始异步接收客户端连接
@@ -94,18 +99,12 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             {
                 Socket client = iar.AsyncState as Socket;
                 int len = client.EndReceive(iar);
-                if (len <= 0)
+                if (len > 0)
                 {
-                    return;
+                    string recvData = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
+                    // dealwith recv data
+                    ActionHandOut(client, recvData);
                 }
-                string recvData = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
-                //Console.WriteLine($"Client-[{client.RemoteEndPoint.ToString()}]:\n{recvData}");
-                // dealwith recv data
-                ActionHandOut(recvData, client);
-
-                //byte[] buffer = Encoding.UTF8.GetBytes($"Recv Data: {recvData}");
-                //client.Send(buffer);
-
                 StartReceive(client);
             }
             catch (Exception error)
@@ -134,23 +133,21 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                     SocketProtocolData protocol = protocols.FirstOrDefault();
                     if (protocols != null)
                     {
-                        // 获取当前程序集 
-                        Assembly assembly = Assembly.GetExecutingAssembly();
                         //dynamic obj = assembly.CreateInstance("类的完全限定名（即包括命名空间）");
-                        dynamic obj = assembly.CreateInstance($"SoftLiu_ServerIOCSharp.SocketData.ProtocolData.{protocol.Type}");
+                        dynamic obj = m_assembly.CreateInstance($"SoftLiu_ServerIOCSharp.SocketData.ProtocolData.{protocol.Type}");
                         if (obj is ActionData)
                         {
                             ActionData data = obj as ActionData;
-                            data.Init(recvData);
+                            data.Init(client, recvData);
                         }
                         else
                         {
-                            Console.WriteLine($"WebSocketProtocolData CreateInstance is null, action: {action}, type: {protocol.Type}");
+                            Console.WriteLine($"SocketProtocolData CreateInstance is null, action: {action}, type: {protocol.Type}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"WebSocketProtocolData is null, action: {action}");
+                        Console.WriteLine($"SocketProtocolData is null, action: {action}");
                     }
                 }
             }
