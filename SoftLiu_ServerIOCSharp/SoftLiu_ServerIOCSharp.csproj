@@ -82,7 +82,7 @@
     <Compile Include="SocketData\ProtocolData\ActionServerTimeData.cs" />
     <Compile Include="SocketData\ProtocolData\ActionData.cs" />
     <Compile Include="SocketData\ProtocolData\ActionLoginData.cs" />
-    <Compile Include="SocketData\ProtocolData\ActionMatchconfData.cs" />
+    <Compile Include="SocketData\ProtocolData\ActionPingData.cs" />
     <Compile Include="SocketData\ProtocolData\ActionPushData.cs" />
     <Compile Include="SocketData\ProtocolData\ActionPvpVariationData.cs" />
     <Compile Include="SocketData\ProtocolData\ActionQueueData.cs" />
