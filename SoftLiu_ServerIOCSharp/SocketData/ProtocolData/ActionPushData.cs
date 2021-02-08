@@ -9,6 +9,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.ProtocolData
     {
         public override void Init(Socket client, string recvJson)
         {
+            base.Init(client, recvJson);
             Console.WriteLine($"ActionPushData Response: {recvJson}");
             Dictionary<string, object> dataRecvDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(recvJson);
 
