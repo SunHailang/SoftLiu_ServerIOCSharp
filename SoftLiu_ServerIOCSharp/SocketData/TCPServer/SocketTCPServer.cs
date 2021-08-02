@@ -134,11 +134,22 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                     if (protocols != null)
                     {
                         //dynamic obj = assembly.CreateInstance("类的完全限定名（即包括命名空间）");
-                        dynamic obj = m_assembly.CreateInstance($"SoftLiu_ServerIOCSharp.SocketData.ProtocolData.{protocol.Type}");
+
+                        // 传参数
+                        object[] paramenters = new object[] {
+                            client
+                        };
+
+
+                        //Object o = Activator.CreateInstance(typeof(ActionData), BindingFlags.Default, paramenters);
+
+                        dynamic obj = m_assembly.CreateInstance($"SoftLiu_ServerIOCSharp.SocketData.ProtocolData.{protocol.Type}",
+                                false, BindingFlags.Default,
+                                null, paramenters, null, null);
                         if (obj is ActionData)
                         {
                             ActionData data = obj as ActionData;
-                            data.Init(client, recvData);
+                            data.Init(recvData);
                         }
                         else
                         {

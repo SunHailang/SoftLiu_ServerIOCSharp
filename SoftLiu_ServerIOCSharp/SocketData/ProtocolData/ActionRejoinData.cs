@@ -5,9 +5,12 @@ namespace SoftLiu_ServerIOCSharp.SocketData.ProtocolData
 {
     public class ActionRejoinData : ActionData
     {
-        public override void Init(Socket client, string recvJson)
+        public ActionRejoinData(Socket client) : base(client)
         {
-            base.Init(client, recvJson);
+        }
+
+        public override void Init(string recvJson)
+        {
             Console.WriteLine($"ActionRejoinData Response: {recvJson}");
         }
     }

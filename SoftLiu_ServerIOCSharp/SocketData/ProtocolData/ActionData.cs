@@ -9,10 +9,12 @@ namespace SoftLiu_ServerIOCSharp.SocketData
     {
         private Socket m_client;
 
-        public virtual void Init(Socket client, string recvJson)
+        public ActionData(Socket client)
         {
             m_client = client;
         }
+
+        public abstract void Init(string recvJson);
 
         protected void SendResponseData(Dictionary<string, object> data, string action, int errcode)
         {
@@ -28,8 +30,8 @@ namespace SoftLiu_ServerIOCSharp.SocketData
                 m_client.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, (ar) =>
                 {
                     Socket socket = ar.AsyncState as Socket;
-                // 发送数据长度
-                int bytesLen = m_client.EndSend(ar);
+                    // 发送数据长度
+                    int bytesLen = m_client.EndSend(ar);
 
                 }, m_client);
             }
