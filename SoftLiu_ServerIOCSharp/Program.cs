@@ -19,9 +19,9 @@ namespace SoftLiu_ServerIOCSharp
     class Program
     {
         private const string m_serverURL = 
-            //"http://127.0.0.1:8080/";
-            //"http://10.192.91.40:8080/";
-            "http://localhost:8080/";
+            "http://127.0.0.1:8080/";
+            //"http://10.26.24.22:8080/";
+            //"http://localhost:8080/";
 
         private static HttpListener listener = null;
 
@@ -47,10 +47,10 @@ namespace SoftLiu_ServerIOCSharp
             // 启动HTTP服务器
             HttpServer();
             // 启动 TCP Socket服务器
-            SocketTCPServerStart();
+            //SocketTCPServerStart();
 
             // 启动 UDP Socket服务器
-            SocketUDPServerStart();
+            //SocketUDPServerStart();
 
             Console.Read();
         }

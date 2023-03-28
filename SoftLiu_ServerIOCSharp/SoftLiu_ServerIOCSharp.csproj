@@ -69,6 +69,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerData\AssetBundleDownloadData.cs" />
+    <Compile Include="ServerData\HotFixDownload\HotFixDownloadData.cs" />
     <Compile Include="ServerData\PackageUpdateData.cs" />
     <Compile Include="ServerData\POST\Data\LoginData.cs" />
     <Compile Include="ServerData\ServerTimeData.cs" />

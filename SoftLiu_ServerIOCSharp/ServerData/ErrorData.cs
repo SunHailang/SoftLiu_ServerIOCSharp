@@ -76,7 +76,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                     bw.Flush();
                     bw.Close();
                 }
-                m_response.StatusCode = (int)HttpStatusCode.OK;
+                m_response.StatusCode = (int)HttpStatusCode.Unused;
                 this.m_response.OutputStream.Close();
             }
             else
@@ -114,7 +114,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
                             bw.Flush();
                         }
                     }
-                    m_response.StatusCode = (int)HttpStatusCode.OK;
+                    m_response.StatusCode = (int)HttpStatusCode.Unused;
                     this.m_response.OutputStream.Close();
                 }
             }

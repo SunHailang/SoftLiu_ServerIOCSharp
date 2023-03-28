@@ -59,6 +59,9 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             m_function = this.m_request.RawUrl.Trim('/');
             switch (m_function)
             {
+                case "HotFixRes":
+                    m_functionData = new HotFixDownload.HotFixDownloadData(request, response);
+                    break;
                 case "AssetBundles":
                     m_functionData = new AssetBundleDownloadData(request, response);
                     break;

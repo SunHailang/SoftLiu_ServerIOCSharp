@@ -26,6 +26,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
         private VersionCheckData m_versionCheckData = null;
 
         private const string m_assetBundlesPath = "Resources/GameData/AssetBundles";
+        //private const string m_assetBundlesPath = @"E:\StudyGit\SoftLiu_EmojiText\HotFixRes\"
 
         private string m_platform = string.Empty;
         private string m_gameID = string.Empty;
