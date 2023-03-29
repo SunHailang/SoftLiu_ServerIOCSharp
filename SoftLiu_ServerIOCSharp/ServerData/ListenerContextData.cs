@@ -29,7 +29,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             this.m_Context = context;
             string httpMethod = this.m_Context.Request.HttpMethod;
             Uri uri = this.m_Context.Request.Url;
-            Console.WriteLine($"Uri: host-{uri.Host}, port-{uri.Port}, userinfo-{uri.UserInfo}");
+            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ff")}]Uri: host-{uri.Host}, port-{uri.Port}, userinfo-{uri.UserInfo}");
             switch (httpMethod.ToUpper())
             {
                 case "GET":
