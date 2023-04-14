@@ -11,7 +11,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.ProtocolData
 
         public override void Init(string recvJson)
         {
-            Console.WriteLine($"ActionRejoinData Response: {recvJson}");
+            Debug.Log($"ActionRejoinData Response: {recvJson}");
         }
     }
 }

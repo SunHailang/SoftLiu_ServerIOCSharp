@@ -29,7 +29,8 @@
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\Out\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -52,6 +53,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -59,8 +61,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TFramework">
-      <HintPath>..\Out\LibrarySupport\TFramework.dll</HintPath>
+    <Reference Include="TFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ThreadLibrary\TFramework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +96,7 @@
     <Compile Include="SocketData\SocketProtocolData.cs" />
     <Compile Include="SocketData\TCPServer\SocketTCPServer.cs" />
     <Compile Include="SocketData\UDPServer\SocketUDPServer.cs" />
+    <Compile Include="Utils\Debug.cs" />
     <Compile Include="Utils\FileUtility.cs" />
     <Compile Include="Utils\SharpZipUtility.cs" />
     <Compile Include="Utils\StringUtils.cs" />
@@ -101,7 +105,6 @@
     <Compile Include="Utils\ZipHandlerData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="Misc\ContentType.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">

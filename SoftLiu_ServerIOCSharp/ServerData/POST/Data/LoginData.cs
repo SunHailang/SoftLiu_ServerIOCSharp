@@ -35,13 +35,13 @@ namespace SoftLiu_ServerIOCSharp.ServerData.POST.Data
                     using (StreamReader reader = new StreamReader(s, Encoding.UTF8))
                     {
                         string content = reader.ReadToEnd();
-                        Console.WriteLine("InputStream: " + content);
+                        Debug.Log("InputStream: " + content);
                         Dictionary<string, object> inputDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(content);
                         // 有两个参数 username， password , state
                         string username = inputDic["username"].ToString();
                         string password = inputDic["password"].ToString();
                         int state = (int)inputDic["state"];
-                        Console.WriteLine("InputStream Dictionary Length: " + (inputDic == null ? -1 : inputDic.Count));
+                        Debug.Log("InputStream Dictionary Length: " + (inputDic == null ? -1 : inputDic.Count));
                         switch (state)
                         {
                             case -1:

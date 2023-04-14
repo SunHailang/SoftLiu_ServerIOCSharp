@@ -20,14 +20,12 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
 
         private Assembly m_assembly = null;
 
-        public SocketTCPServer()
+        public SocketTCPServer(string socketIP, string socketPort)
         {
-            string socketIP = ConfigurationUtils.Instance.GetAppSettingValue("SocketServerIP");
-            string socketPort = ConfigurationUtils.Instance.GetAppSettingValue("SocketServerPort");
             int port = 0;
             if (!int.TryParse(socketPort, out port))
             {
-                Console.WriteLine($"SocketTCPServer Socket TCP Port Error: {socketPort}");
+                Debug.Log($"SocketTCPServer Socket TCP Port Error: {socketPort}");
                 return;
             }
             m_tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -38,7 +36,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
 
             //m_tcpSocket.
 
-            Console.WriteLine("SocketTCPServer Socket Create Success.");
+            Debug.Log("SocketTCPServer Socket Create Success.");
             m_tcpSocketClientList = new Dictionary<string, Socket>();
             // 大小设置为 1M
             m_recvBuffer = new byte[1024 * 1024];
@@ -61,13 +59,13 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                 Socket server = ar.AsyncState as Socket;
                 Socket client = server.EndAccept(ar);
                 // 有客户端连接进来
-                Console.WriteLine($"SocketTCPServer Client Connect Success, Client:{client.RemoteEndPoint.ToString()}");
+                Debug.Log($"SocketTCPServer Client Connect Success, Client:{client.RemoteEndPoint.ToString()}");
                 AddClientList(client);
                 StartReceive(client);
             }
             catch (Exception error)
             {
-                Console.WriteLine($"SocketTCPServer AcceptCallback Error: {error.Message}");
+                Debug.Log($"SocketTCPServer AcceptCallback Error: {error.Message}");
             }
             finally
             {
@@ -83,10 +81,10 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             }
             catch (Exception error)
             {
-                Console.WriteLine($"SocketTCPServer StartReceive Error: {error.Message}");
+                Debug.LogError($"SocketTCPServer StartReceive Error: {error.Message}");
                 if (client != null)
                 {
-                    Console.WriteLine($"SocketTCPServer StartReceive Close: {client.RemoteEndPoint.ToString()}");
+                    Debug.Log($"SocketTCPServer StartReceive Close: {client.RemoteEndPoint.ToString()}");
                     RemoveClientList(client);
                     client.Close();
                 }
@@ -109,11 +107,11 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
             }
             catch (Exception error)
             {
-                Console.WriteLine($"SocketTCPServer ReceiveCallback Error: {error.Message}");
+                Debug.LogWarning($"SocketTCPServer ReceiveCallback Error: {error.Message}");
                 if (iar != null && (iar.AsyncState as Socket) != null)
                 {
                     Socket client = iar.AsyncState as Socket;
-                    Console.WriteLine($"SocketTCPServer ReceiveCallback Close Client: {client.RemoteEndPoint.ToString()}");
+                    Debug.Log($"SocketTCPServer ReceiveCallback Close Client: {client.RemoteEndPoint.ToString()}");
                     RemoveClientList(client);
                     client.Close();
                 }
@@ -153,12 +151,12 @@ namespace SoftLiu_ServerIOCSharp.SocketData.TCPServer
                         }
                         else
                         {
-                            Console.WriteLine($"SocketProtocolData CreateInstance is null, action: {action}, type: {protocol.Type}");
+                            Debug.LogWarning($"SocketProtocolData CreateInstance is null, action: {action}, type: {protocol.Type}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"SocketProtocolData is null, action: {action}");
+                        Debug.LogWarning($"SocketProtocolData is null, action: {action}");
                     }
                 }
             }

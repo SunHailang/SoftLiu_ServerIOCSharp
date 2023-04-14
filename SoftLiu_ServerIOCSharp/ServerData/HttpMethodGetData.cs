@@ -55,7 +55,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             //    }
             //}
 
-            Console.WriteLine(this.m_request.RawUrl.Trim('/'));
+            Debug.Log(this.m_request.RawUrl.Trim('/'));
             m_function = this.m_request.RawUrl.Trim('/');
             switch (m_function)
             {

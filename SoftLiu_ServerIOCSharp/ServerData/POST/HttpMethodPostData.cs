@@ -45,7 +45,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             this.m_request = request;
             this.m_response = response;
 
-            Console.WriteLine("POST: " + this.m_request.RawUrl.Trim('/'));
+            Debug.Log("POST: " + this.m_request.RawUrl.Trim('/'));
             m_function = this.m_request.RawUrl.Trim('/');
             switch (m_function)
             {

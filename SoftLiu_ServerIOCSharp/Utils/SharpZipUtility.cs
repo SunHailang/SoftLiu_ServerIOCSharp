@@ -130,7 +130,7 @@ namespace SoftLiu_ServerIOCSharp.Utils
                             ZipEntry entry;
                             using (ZipFile zipFile = new ZipFile(TargetFile.Trim()))
                             {
-                                Console.WriteLine(string.Format("ZipFile Count: {0}", zipFile.Count));
+                                Debug.Log(string.Format("ZipFile Count: {0}", zipFile.Count));
                                 zip.fileCount = zipFile.Count;
                             }
 

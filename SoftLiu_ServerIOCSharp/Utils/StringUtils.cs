@@ -27,7 +27,7 @@ namespace SoftLiu_ServerIOCSharp.Utils
             }
             catch (Exception error)
             {
-                Console.WriteLine("GetContneTypeByKey Error: " + error.Message);
+                Debug.LogError("GetContneTypeByKey Error: " + error.Message);
             }
 
             return "application/octet-stream";

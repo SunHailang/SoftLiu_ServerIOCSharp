@@ -19,16 +19,15 @@ namespace SoftLiu_ServerIOCSharp.Algorithm
             //int n = 6;
             //int m = 2;
             //int result = IntegerPartition(n, m);
-            //Console.WriteLine(string.Format("IntegerPartition n= {0} , m= {1} , result= {2}", n, m, result));
+            //Debug.Log(string.Format("IntegerPartition n= {0} , m= {1} , result= {2}", n, m, result));
 
             //int n = 3;
             //int result = 0;
             //HanoiTower(n, 'A', 'B', 'C', ref result);
-            //Console.WriteLine(string.Format("HanoiTower result= {0}", result));
+            //Debug.Log(string.Format("HanoiTower result= {0}", result));
 
             ChessBoard(10,0, 0, 0, 8);
-            Console.WriteLine(title);
-            Console.WriteLine();
+            Debug.Log($"title");
         }
         private int title = 0;
         /// <summary>
@@ -99,7 +98,7 @@ namespace SoftLiu_ServerIOCSharp.Algorithm
                 HanoiTower(n - 1, A, C, B, ref result);
                 result++;
                 // move n from A to C
-                Console.WriteLine(string.Format("第{0}步， {1} 从{2}到{3}", result, n, A, C));
+                Debug.Log(string.Format("第{0}步， {1} 从{2}到{3}", result, n, A, C));
                 HanoiTower(n - 1, B, A, C, ref result);
             }
         }

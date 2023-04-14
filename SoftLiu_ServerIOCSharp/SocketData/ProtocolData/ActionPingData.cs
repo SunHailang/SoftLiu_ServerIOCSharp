@@ -13,7 +13,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.ProtocolData
 
         public override void Init(string recvJson)
         {
-            //Console.WriteLine($"ActionMatchconfData Response: {responseJson}");
+            //Debug.Log($"ActionMatchconfData Response: {responseJson}");
             Dictionary<string, object> dataRecvDic = JsonUtils.Instance.JsonToObject<Dictionary<string, object>>(recvJson);
             if (dataRecvDic != null && dataRecvDic.ContainsKey("action"))
             {

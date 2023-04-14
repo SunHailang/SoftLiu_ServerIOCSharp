@@ -29,17 +29,17 @@ namespace SoftLiu_ServerIOCSharp.ServerData
             this.m_Context = context;
             string httpMethod = this.m_Context.Request.HttpMethod;
             Uri uri = this.m_Context.Request.Url;
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ff")}]Uri: host-{uri.Host}, port-{uri.Port}, userinfo-{uri.UserInfo}");
+            Debug.Log($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ff")}]Uri: host-{uri.Host}, port-{uri.Port}, userinfo-{uri.UserInfo}");
             switch (httpMethod.ToUpper())
             {
                 case "GET":
                     m_type = MethodType.GET;
-                    Console.WriteLine(this.m_Context.Request.UserHostAddress + " -> Use Get Request.");
+                    Debug.Log(this.m_Context.Request.UserHostAddress + " -> Use Get Request.");
                     m_httpMethodData = new HttpMethodGetData(this.m_Context.Request, this.m_Context.Response);
                     break;
                 case "POST":
                     m_type = MethodType.POST;
-                    Console.WriteLine(this.m_Context.Request.UserHostAddress + " -> Use Post Request.");
+                    Debug.Log(this.m_Context.Request.UserHostAddress + " -> Use Post Request.");
                     m_httpMethodData = new HttpMethodPostData(this.m_Context.Request, this.m_Context.Response);
                     break;
                 default:

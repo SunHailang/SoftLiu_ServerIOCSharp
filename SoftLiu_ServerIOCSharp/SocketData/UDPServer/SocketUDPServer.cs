@@ -21,20 +21,18 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
 
         private List<EndPoint> m_clientList = new List<EndPoint>();
 
-        public SocketUDPServer()
+        public SocketUDPServer(string udpIP, string udpPort)
         {
-            Console.WriteLine("udp server starting...");
+            Debug.Log("udp server starting...");
 
             m_recvBuffer = new byte[1024 * 1024];
 
             m_udpServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            string udpIP = ConfigurationUtils.Instance.GetAppSettingValue("SocketServerIP");
             IPAddress address = IPAddress.Parse(udpIP);
-            string udpPort = ConfigurationUtils.Instance.GetAppSettingValue("SocketServerUDPPort");
             int port = 0;
             if (!int.TryParse(udpPort, out port))
             {
-                Console.WriteLine($"SocketTCPServer Socket TCP Port Error: {udpPort}");
+                Debug.LogWarning($"SocketTCPServer Socket TCP Port Error: {udpPort}");
                 return;
             }
             m_serverEndPoint = new IPEndPoint(address, port);
@@ -59,7 +57,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
                     }
 
                     string recv = Encoding.UTF8.GetString(m_recvBuffer, 0, len);
-                    Console.WriteLine($"recv callback:{recv} , ip:{m_clientEndPoint.ToString()}");
+                    Debug.Log($"recv callback:{recv} , ip:{m_clientEndPoint.ToString()}");
 
                     byte[] buffer = Encoding.UTF8.GetBytes("recv");
                     m_udpServer.SendTo(buffer, m_clientEndPoint);
@@ -67,7 +65,7 @@ namespace SoftLiu_ServerIOCSharp.SocketData.UDPServer
             }
             catch (Exception error)
             {
-                Console.WriteLine($"SocketTCPServer AcceptCallback Error: {error.Message}");
+                Debug.LogError($"SocketTCPServer AcceptCallback Error: {error.Message}");
             }
             finally
             {

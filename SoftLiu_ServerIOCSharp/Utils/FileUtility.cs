@@ -38,7 +38,7 @@ namespace SoftLiu_ServerIOCSharp.Utils
             }
             catch (Exception error)
             {
-                Console.WriteLine("CopyFileRecursively Error: " + error.Message);
+                Debug.LogError("CopyFileRecursively Error: " + error.Message);
             }
         }
         /// <summary>
@@ -77,7 +77,7 @@ namespace SoftLiu_ServerIOCSharp.Utils
             }
             catch (Exception error)
             {
-                Console.WriteLine("Get Directory Files Count Error: " + error.Message);
+                Debug.LogError("Get Directory Files Count Error: " + error.Message);
             }
         }
     }
