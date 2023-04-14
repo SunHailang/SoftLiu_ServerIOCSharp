@@ -84,7 +84,7 @@
     <Compile Include="MiscManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProtoBuf\Login.cs" />
+    <Compile Include="ProtoBuf\csharp\Login.cs" />
     <Compile Include="ServerData\AssetBundleDownloadData.cs" />
     <Compile Include="ServerData\HotFixDownload\HotFixDownloadData.cs" />
     <Compile Include="ServerData\PackageUpdateData.cs" />
