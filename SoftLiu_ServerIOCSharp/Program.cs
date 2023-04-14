@@ -38,10 +38,10 @@ namespace SoftLiu_ServerIOCSharp
             // 启动HTTP服务器
             HttpServer();
             // 启动 TCP Socket服务器
-            SocketTCPServerStart();
+            //SocketTCPServerStart();
 
             // 启动 UDP Socket服务器
-            SocketUDPServerStart();
+            //SocketUDPServerStart();
 
             Console.Read();
         }

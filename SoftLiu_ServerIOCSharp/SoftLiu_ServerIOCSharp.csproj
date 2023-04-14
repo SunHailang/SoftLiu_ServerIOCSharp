@@ -33,6 +33,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>Internet</TargetZone>
@@ -105,6 +106,7 @@
     <Compile Include="Utils\ZipHandlerData.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="Misc\ContentType.json" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest">
