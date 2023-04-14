@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,5 +19,20 @@ namespace SoftLiu_ServerIOCSharp.SocketData
         {
             ProtocolDatas = datas;
         }
+
+
+
+        public void SendProtobufMsg(IMessage msg, Stream stream)
+        {            
+            msg.WriteTo(stream);
+        }
+
+        public T RecvProtobufMsg<T>(byte[] bytes) where T : IMessage, new()
+        {
+            T data = new T();
+            data.MergeFrom(bytes);
+            return data;
+        }
+
     }
 }

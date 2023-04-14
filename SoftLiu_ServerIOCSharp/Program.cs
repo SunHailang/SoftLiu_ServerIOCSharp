@@ -24,24 +24,22 @@ namespace SoftLiu_ServerIOCSharp
         {
             MiscManager.Instance.Init();
 
-            int maxThreadNum, portThreadNum;
             //线程池
-            int minThreadNum;
             ThreadPool.SetMaxThreads(10, 10);
             ThreadPool.SetMinThreads(2, 2);
 
-            ThreadPool.GetMaxThreads(out maxThreadNum, out portThreadNum);
-            ThreadPool.GetMinThreads(out minThreadNum, out portThreadNum);
+            ThreadPool.GetMaxThreads(out int maxThreadNum, out int portMaxThreadNum);
+            ThreadPool.GetMinThreads(out int minThreadNum, out int portMinThreadNum);
 
             Debug.Log(maxThreadNum + "  -  " + minThreadNum);
 
             // 启动HTTP服务器
             HttpServer();
             // 启动 TCP Socket服务器
-            //SocketTCPServerStart();
+            SocketTCPServerStart();
 
             // 启动 UDP Socket服务器
-            //SocketUDPServerStart();
+            SocketUDPServerStart();
 
             Console.Read();
         }
