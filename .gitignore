@@ -12,3 +12,5 @@
 /Resources/GameData/PackageData/
 
 /Out/Resources/HotFixRes/
+
+*.exe.config
