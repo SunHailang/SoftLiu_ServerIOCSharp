@@ -40,7 +40,7 @@ namespace SoftLiu_ServerIOCSharp.Misc
                     {
                         List<object> protocolDatas = jsonData["ReceiveProtocolData"];
                         List<SocketProtocolData> datas = DataUtils.CreateInstances<SocketProtocolData>(protocolDatas);
-                        SocketManager.Instance.SetProtocolDatas(datas);
+                        //SocketManager.Instance.SetProtocolDatas(datas);
                     }
                 }
             }

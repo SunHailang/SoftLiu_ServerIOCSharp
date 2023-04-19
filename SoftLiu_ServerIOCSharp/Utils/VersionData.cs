@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace SoftLiu_ServerIOCSharp.Utils
 {
@@ -19,7 +14,7 @@ namespace SoftLiu_ServerIOCSharp.Utils
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return TFramework.Utils.JsonUtils.Instance.ObjectToJson(this);
         }
     }
 }

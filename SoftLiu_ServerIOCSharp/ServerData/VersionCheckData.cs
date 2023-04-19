@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 
 namespace SoftLiu_ServerIOCSharp.ServerData
@@ -83,7 +81,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
 
         public override string ToString()
         {
-            string json = JsonConvert.SerializeObject(this);
+            string json = TFramework.Utils.JsonUtils.Instance.ObjectToJson(this);
             return json;
         }
     }

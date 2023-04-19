@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using SoftLiu_ServerIOCSharp.Utils;
 using System.IO;
 
@@ -63,7 +58,7 @@ namespace SoftLiu_ServerIOCSharp.ServerData
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return TFramework.Utils.JsonUtils.Instance.ObjectToJson(this);
         }
     }
 }

@@ -85,6 +85,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtoBuf\csharp\Login.cs" />
+    <Compile Include="ProtoBuf\csharp\UserInfo.cs" />
+    <Compile Include="ProtoBuf\MsgHandler.cs" />
+    <Compile Include="ProtoBuf\MsgRequest.cs" />
+    <Compile Include="ProtoBuf\NetworkEnum.cs" />
     <Compile Include="ServerData\AssetBundleDownloadData.cs" />
     <Compile Include="ServerData\HotFixDownload\HotFixDownloadData.cs" />
     <Compile Include="ServerData\PackageUpdateData.cs" />
@@ -108,6 +112,7 @@
     <Compile Include="SocketData\ProtocolData\ActionUploadData.cs" />
     <Compile Include="SocketData\SocketManager.cs" />
     <Compile Include="SocketData\SocketProtocolData.cs" />
+    <Compile Include="SocketData\TCPServer\ProtobufClient.cs" />
     <Compile Include="SocketData\TCPServer\SocketTCPServer.cs" />
     <Compile Include="SocketData\UDPServer\SocketUDPServer.cs" />
     <Compile Include="Utils\Debug.cs" />
@@ -126,6 +131,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Misc\SocketServerData.json" />
+    <None Include="ProtoBuf\proto\Login.proto" />
+    <None Include="ProtoBuf\proto\UserInfo.proto" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ThreadLibrary\TFramework.dll" />

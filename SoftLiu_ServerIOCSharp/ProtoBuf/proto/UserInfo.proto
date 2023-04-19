@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+package TFramework;
+
+option csharp_namespace = "Google.Protobuf.TFramework";
+
+enum Gender{
+    MaleType = 0;
+    FemaleType = 1;
+    OtherType = 2;
+}
+
+message UserInfo {
+    uint64 userId = 1;
+    string userName = 2;
+    Gender userGender = 3;
+    uint32 userAge = 4;
+    string userPhoneNum = 5;
+}
